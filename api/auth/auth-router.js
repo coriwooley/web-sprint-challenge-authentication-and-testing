@@ -7,16 +7,15 @@ const Users = require("../users/users-model");
 const { JWT_SECRET, BCRYPT_ROUNDS } = require("../config/index");
 const { uniqueName, validInput, validUsername } = require("./auth-middleware");
 
-router.post("/register", validInput, uniqueName, async (req, res, next) => {
-  try {
-    const { username, password } = req.body;
-    const hash = bcrypt.hashSync(password, BCRYPT_ROUNDS);
+router.post("/register", validInput, uniqueName, (req, res, next) => {
+  const { username, password } = req.body;
+  const hash = bcrypt.hashSync(password, BCRYPT_ROUNDS);
 
-    const newUser = Users.create({ username, password: hash });
-    res.status(201).json(newUser);
-  } catch (err) {
-    next(err);
-  }
+  Users.create({ username, password: hash })
+    .then((newUser) => {
+      res.status(201).json(newUser);
+    })
+    .catch(next);
 });
 
 router.post("/login", validInput, validUsername, (req, res, next) => {
