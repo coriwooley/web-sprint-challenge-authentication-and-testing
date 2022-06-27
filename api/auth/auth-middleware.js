@@ -5,7 +5,9 @@ const uniqueName = async (req, res, next) => {
 
   const existingName = await Users.findByUserName(username);
   if (existingName) {
-    next({ status: 401, message: "username taken" });
+    next({ status: 401, message: "username taken" })
+  } else {
+    next()
   }
 };
 
